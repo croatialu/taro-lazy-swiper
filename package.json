@@ -35,6 +35,11 @@
     "lazy"
   ],
   "author": "",
+  "homepage": "https://github.com/CroatiaParanoia/taro-lazy-swiper",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:CroatiaParanoia/taro-lazy-swiper.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^13.0.0",
