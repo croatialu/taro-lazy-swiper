@@ -26,10 +26,13 @@
     "test": "cross-env NODE_ENV=test && jest --coverage",
     "test:ci": "yarn run build:h5 && yarn run test",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "clean": "rimraf .temp dist lib coverage types"
+    "clean": "rimraf .temp dist lib coverage types",
+    "release": "release-it"
   },
   "keywords": [
-    "taro", "swiper", "lazy"
+    "taro",
+    "swiper",
+    "lazy"
   ],
   "author": "",
   "license": "MIT",
@@ -52,6 +55,7 @@
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
     "jest": "26",
+    "release-it": "^15.3.0",
     "rimraf": "3.0.2",
     "rollup": "^2.3.1",
     "rollup-plugin-copy": "^3.3.0",
