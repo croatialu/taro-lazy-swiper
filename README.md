@@ -1,1 +1,2 @@
-# Taro UI 库 React 版本范例
+# taro-lazy-swiper
+基于小程序 swiper 开发的 lazy swiper
