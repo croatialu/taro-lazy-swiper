@@ -77,5 +77,8 @@
     "@tarojs/react": "^3.0.8",
     "react": ">=16.13.0",
     "react-dom": ">=16.13.0"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3"
   }
 }

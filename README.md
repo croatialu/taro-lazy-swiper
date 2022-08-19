@@ -102,4 +102,8 @@ npm link taro-lazy-swiper
 
 [NervJS/taro-uilib-react](https://github.com/NervJS/taro-uilib-react)
 
+[kentcdodds/use-deep-compare-effect](https://github.com/kentcdodds/use-deep-compare-effect)
+
+[epoberezkin/fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal)
+
 等等...

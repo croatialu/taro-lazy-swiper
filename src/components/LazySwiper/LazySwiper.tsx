@@ -8,20 +8,25 @@ import {LazySwiperItem, LazySwiperProps} from "./types";
 
 import {getStepValue, sleep} from "./utils";
 import {minCount} from "./constant";
-
-// import './../../styles/components/LazySwiper/LazySwiper.scss'
+import useDeepCompareEffect from "../../hooks/useDeepCompareEffect";
+import useMemoizedFn from "../../hooks/useMemoizedFn";
 
 const ENV_TYPE = Taro.getEnv()
 
 function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   const {
+    className = '',
+    style,
+    vertical,
+    defaultIndex = 0,
     dataSource,
     maxCount = 3,
     renderContent,
     loop,
     keyExtractor,
     lazySwiper,
-    duration = 500
+    duration = 500,
+    onChange,
   } = props
   const [isAnimating, setAnimating] = useState(false)
   const [swiperIndex, setSwiperIndex] = useState(0)
@@ -29,6 +34,10 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
 
   const [swiperKey, setSwiperKey] = useState('normal')
 
+
+  const propsChangeEvent = useMemoizedFn((index: number) => {
+    onChange?.({ current: index })
+  })
 
   const updateSwiperIndex = useCallback(async (index: number) => {
     setSwiperIndex(index)
@@ -39,41 +48,45 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     }
 
     swiperSchedulerRef.current.recompute()
-    await sleep(300)
+    await sleep(Math.floor(duration / 3))
     setAnimating(false)
   }, [duration])
 
   const swiperSchedulerRef = useRef<SwiperScheduler<LazySwiperItem<T>>>(
     useMemo(() => {
       return new SwiperScheduler({
-        dataSource,
-        defaultMarkIndex: 0,
+        defaultMarkIndex: defaultIndex,
         minCount: Math.max(minCount, maxCount),
         loop,
-        duration,
-        onRestart(index, key) {
-          console.error('on - restart', index, key)
-          setSwiperIndex(index)
+        onRestart({swiperIndex: sIndex, key}) {
+          console.error('on - onRestart')
+          setSwiperIndex(sIndex)
           setSwiperKey(key)
         },
-        onSwiperIndexChange(index) {
-          console.log('on - onSwiperIndexChange')
-          updateSwiperIndex(index)
+        onSwiperIndexChange({ swiperIndex: sIndex }) {
+          console.log(sIndex, 'on - onSwiperIndexChange')
+          updateSwiperIndex(sIndex)
         },
         onSwiperSourceChange(value) {
           console.log('on - onSwiperSourceChange', value)
           setSource(value)
+        },
+        onMarkIndexChange({ markIndex }){
+          console.log('on - onMarkIndexChange')
+          propsChangeEvent(markIndex)
         }
       })
-    }, [dataSource, duration, loop, maxCount, updateSwiperIndex])
+    }, [defaultIndex, maxCount, loop, updateSwiperIndex, propsChangeEvent])
   )
 
+  useDeepCompareEffect(() => {
+    console.log('dataSource - changed')
 
-  useEffect(() => {
     setSource(
       swiperSchedulerRef.current.updateDataSource(dataSource)
     )
   }, [dataSource])
+
 
   const updateSwiperIndexByStep = useCallback(async (step,) => {
     const swiperScheduler = swiperSchedulerRef.current
@@ -117,20 +130,23 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   }, [lazySwiper, nextSection, prevSection, toSection])
 
 
+  console.log({
+    source,
+    swiperKey,
+    swiperIndex,
+
+  }, 'lazySwiper')
+
   return (
-    <View className='lazy-swiper'>
+    <View className={`lazy-swiper ${className}`} style={style}>
       <Swiper
-        style={{
-          height: '100vh'
-        }}
         key={swiperKey}
         current={swiperIndex}
         onChange={handleChange}
-        className='test-h'
         indicatorColor='#999'
         indicatorActiveColor='#333'
         indicatorDots
-        vertical
+        vertical={vertical}
         circular={swiperSchedulerRef.current.circular}
         duration={duration}
       >
