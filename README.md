@@ -7,11 +7,13 @@
 - 等等
 
 ## 效果
-<video id="video" controls>
-      <source id="mp4" src="./source/demo.mp4" type="video/mp4">
-</video>
+
+https://user-images.githubusercontent.com/22277972/185527883-754dc748-b64a-4717-9f01-0fe5eaca1637.mp4
 
 ## 使用
+
+
+
 
 ### 安装
 ``` shell
