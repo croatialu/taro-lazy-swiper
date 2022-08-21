@@ -2,9 +2,9 @@ const { jsWithTs: tsjPreset } = require('ts-jest/presets')
 
 module.exports = {
   verbose: true,
-  moduleFileExtensions: ['js', 'jsx', 'json'],
+  moduleFileExtensions: ['ts', 'js', 'jsx', 'json'],
   rootDir: __dirname,
-  testMatch: ['<rootDir>/test/**/*.test.js', '<rootDir>/test/**/test.js'],
+  testMatch: ['<rootDir>/test/*.test.ts'],
   transform: {
     ...tsjPreset.transform
   },

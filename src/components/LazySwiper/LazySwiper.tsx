@@ -3,10 +3,10 @@ import React, {PropsWithChildren, useCallback, useEffect, useMemo, useRef, useSt
 import {SwiperProps} from "@tarojs/components/types/Swiper";
 import Taro from "@tarojs/taro";
 
-import SwiperScheduler from "./SwiperScheduler";
+import SwiperScheduler from "../../SwiperScheduler";
 import {LazySwiperItem, LazySwiperProps} from "./types";
 
-import {getStepValue, sleep} from "./utils";
+import {getStepValue, sleep} from "./../../common/utils";
 import {minCount} from "./constant";
 import useDeepCompareEffect from "../../hooks/useDeepCompareEffect";
 import useMemoizedFn from "../../hooks/useMemoizedFn";
@@ -22,7 +22,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     dataSource,
     maxCount = 3,
     renderContent,
-    loop,
+    loop = false,
     keyExtractor,
     lazySwiper,
     duration = 500,
@@ -59,7 +59,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
         minCount: Math.max(minCount, maxCount),
         loop,
         onRestart({swiperIndex: sIndex, key}) {
-          console.error('on - onRestart')
+          console.error('on - onRestart', {sIndex, key})
           setSwiperIndex(sIndex)
           setSwiperKey(key)
         },
@@ -140,6 +140,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   return (
     <View className={`lazy-swiper ${className}`} style={style}>
       <Swiper
+        className='swiper'
         key={swiperKey}
         current={swiperIndex}
         onChange={handleChange}

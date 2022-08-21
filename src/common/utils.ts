@@ -16,8 +16,8 @@ export const pipe = (...fns: Function[]) => {
 
 export const getSafeIndex = (index: number, maxIndex: number, minIndex = 0) => {
   return pipe(
-    (value) => Math.max(value, minIndex),
-    (value) => Math.min(value, maxIndex)
+    (value: number) => Math.max(value, minIndex),
+    (value: number) => Math.min(value, maxIndex)
   )(index)
 }
 
@@ -30,7 +30,7 @@ export const getTargetIndex = (toIndex: number, maxIndex: number, minIndex = 0) 
 
 export const getStepValue = (fromIndex: number, toIndex: number, maxIndex = 1, loop = true) => {
   if (fromIndex === toIndex) return 0
-  
+
   if (loop) {
     if (fromIndex === 0 && toIndex === maxIndex) return -1;
     if (toIndex === 0 && fromIndex === maxIndex) return 1;

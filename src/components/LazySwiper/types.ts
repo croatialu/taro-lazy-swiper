@@ -38,7 +38,7 @@ export interface LazySwiperProps<T> {
 
   /**
    * 是否循环
-   * @default true
+   * @default false
    */
   loop?: boolean
 
