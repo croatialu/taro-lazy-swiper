@@ -14,7 +14,7 @@ export const pipe = (...fns: Function[]) => {
   }
 }
 
-export const getSafeIndex = (index: number, maxIndex: number, minIndex = 0) => {
+export const getSafeIndex = (index: number, maxIndex: number, minIndex = 0): number => {
   return pipe(
     (value: number) => Math.max(value, minIndex),
     (value: number) => Math.min(value, maxIndex)

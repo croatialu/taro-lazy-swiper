@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal'
 
-import {getSafeIndex, getStepValue} from "./common/utils";
-import Scheduler from './Scheduler';
+import Scheduler, {SchedulerParams} from './Scheduler';
+import {NotUndefined} from "./common/type-utils";
 
 export interface SwiperSchedulerParams<T> {
   /**
@@ -16,12 +16,29 @@ export interface SwiperSchedulerParams<T> {
 
   loop?: boolean
 
-  onRestart?: (detail: {swiperIndex: number, markIndex: number, key: string, source: T[]}) => void
+  onSwiperRestart?: (detail: {swiperIndex: number, markIndex: number, key: string, source: T[]}) => void
 
+  /**
+   * swiperIndex 变更， 传递给swiper 来跳转
+   * @param detail
+   */
   onSwiperIndexChange?: (detail: {swiperIndex: number, markIndex: number}) => void
-  onBeforeSwiperIndexChange?: () => void
+  /**
+   * swiper 数据变更， 提供给外界重新渲染 swiper items
+   * @param source
+   */
   onSwiperSourceChange?: (source: T[]) => void
+
+  /**
+   * 当前的 数据索引变更， 提供给外面知道现在处于哪一条数据上
+   * @param detail
+   */
   onMarkIndexChange?: (detail: { markIndex:number }) => void
+
+  /**
+   * 当前的 数据索引变更前拦截函数
+   */
+  onBeforeMarkIndexChange?: (detail: { fromIndex: number, toIndex: number }) => (Promise<boolean | undefined> | (boolean | undefined))
 }
 
 class SwiperScheduler<T> extends Scheduler {
@@ -32,10 +49,10 @@ class SwiperScheduler<T> extends Scheduler {
 
   public source: T[] = []
 
-  public onRestart: SwiperSchedulerParams<T>['onRestart']
+  public onSwiperRestart: SwiperSchedulerParams<T>['onSwiperRestart']
+
   public onMarkIndexChange: SwiperSchedulerParams<T>['onMarkIndexChange']
   public onSwiperIndexChange: SwiperSchedulerParams<T>['onSwiperIndexChange']
-  public onBeforeSwiperIndexChange: SwiperSchedulerParams<T>['onBeforeSwiperIndexChange']
   public onSwiperSourceChange: SwiperSchedulerParams<T>['onSwiperSourceChange']
 
   public constructor(params: SwiperSchedulerParams<T>) {
@@ -43,7 +60,17 @@ class SwiperScheduler<T> extends Scheduler {
       dataCount: params.dataSource?.length || 0,
       loop: params.loop || false,
       defaultDataIndex: params.defaultMarkIndex,
-      minCount: params.minCount || 3
+      minCount: params.minCount || 3,
+      onDataIndexChange: (detail) => {
+        this.emitMarkIndexChange(detail)
+      },
+      onRestart: (detail) => {
+        this.emitRestart(detail)
+      },
+      onRecompute: () => this.recompute(),
+      onContainerIndexChange: (detail) => {
+        this.emitSwiperIndexChange(detail)
+      },
     })
     this.setup(params)
   }
@@ -77,7 +104,7 @@ class SwiperScheduler<T> extends Scheduler {
       dataSource = [],
       defaultMarkIndex = 0,
       loop = false,
-      onRestart,
+      onSwiperRestart,
       onSwiperIndexChange,
       onSwiperSourceChange,
       onMarkIndexChange,
@@ -87,7 +114,7 @@ class SwiperScheduler<T> extends Scheduler {
     this.loop = loop
     this.setMarkIndex(defaultMarkIndex)
 
-    this.onRestart = onRestart
+    this.onSwiperRestart = onSwiperRestart
     this.onSwiperIndexChange = onSwiperIndexChange
     this.onSwiperSourceChange = onSwiperSourceChange
     this.onMarkIndexChange = onMarkIndexChange
@@ -107,64 +134,64 @@ class SwiperScheduler<T> extends Scheduler {
     return this.markIndexOfDelay === targetMarkIndex
   }
 
-  public toSection(dataIndex: number) {
-    const step = getStepValue(this.dataIndex, dataIndex, this.maxDataIndex, this.loop)
+  public async toSection(dataIndex: number) {
+    const step = this.getStepOffset(dataIndex)
 
     if (Math.abs(step) === 1) {
       return this.offsetSection(step)
     }
 
-    this.setMarkIndex(
-      getSafeIndex(dataIndex, this.maxDataIndex)
+    const markIndex = await this.setMarkIndex(
+      this.getSafeDataIndex(dataIndex)
     )
 
-    this.setSwiperIndex(
+    const swiperIndex = this.setSwiperIndex(
       this.computeContainerIndex()
     )
 
     return {
-      swiperIndex: this.containerIndex,
-      markIndex: this.dataIndex
+      swiperIndex,
+      markIndex
     }
   }
 
-  public offsetSection(step: number) {
+  public async offsetSection(step: number) {
 
-    this.setMarkIndex(
-      this.dataIndex + step
+    const markIndex = await this.setMarkIndex(
+      this.getDataIndex() + step
     )
 
-    this.setSwiperIndex(
+    const swiperIndex = this.setSwiperIndex(
       this.computeContainerIndex(step)
     )
 
     return {
-      swiperIndex: this.containerIndex,
-      markIndex: this.dataIndex
+      swiperIndex,
+      markIndex
     }
   }
 
 
-  public emitRestart(){
-    this.recompute()
-    this.onRestart?.({
-      swiperIndex: this.containerIndex,
-      markIndex: this.dataIndex,
+  public emitRestart({containerIndex, dataIndex }: Parameters<NotUndefined<SchedulerParams['onRestart']>>[0]){
+    const source = this.recompute()
+    this.onSwiperRestart?.({
+      swiperIndex: containerIndex,
+      markIndex: dataIndex,
       key:Date.now().toString(36).slice(0, 8),
-      source: this.source
+      source
     })
   }
 
-  public emitSwiperIndexChange(){
+  public emitSwiperIndexChange({containerIndex, dataIndex }: Parameters<NotUndefined<SchedulerParams['onContainerIndexChange']>>[0]){
     this.onSwiperIndexChange?.({
-      swiperIndex: this.containerIndex,
-      markIndex: this.dataIndex,
+      swiperIndex: containerIndex,
+      markIndex: dataIndex,
     })
   }
 
-  public emitMarkIndexChange(){
+  public emitMarkIndexChange({ dataIndex }: Parameters<NotUndefined<SchedulerParams['onDataIndexChange']>>[0]){
     this.onMarkIndexChange?.({
-      markIndex: this.dataIndex
+      markIndex: dataIndex
     })
   }
 
@@ -172,13 +199,6 @@ class SwiperScheduler<T> extends Scheduler {
     const result = super.recomputeIndexArr()
 
     const source = result.map(index => this.dataSource[index])
-
-
-    console.log({
-      maxMarkIndex: this.maxDataIndex,
-      maxSwiperIndex: this.maxContainerIndex,
-      source: source,
-    }, 'recompute')
 
     this.setSource(
       source
@@ -190,24 +210,12 @@ class SwiperScheduler<T> extends Scheduler {
   }
 
   private setMarkIndex(markIndex: number) {
-    return super.updateIndex(markIndex, {
-      onDataIndexChange: () => this.emitMarkIndexChange(),
-      onRestart: () => this.emitRestart(),
-      onRecompute: () => this.recompute()
-    })
+    return super.updateIndex(markIndex)
   }
 
 
   private setSwiperIndex(swiperIndex: number) {
-    const preSwiperIndex = this.containerIndex
-
-    super.setContainerIndex(swiperIndex)
-
-    if (preSwiperIndex !== this.containerIndex) {
-      this.emitSwiperIndexChange()
-    }
-
-    return this.containerIndex
+    return super.setContainerIndex(swiperIndex)
   }
 
   private setSource(source: T[]) {
@@ -222,7 +230,7 @@ class SwiperScheduler<T> extends Scheduler {
 
 
   private updateMarkIndexOfDelay() {
-    this.markIndexOfDelay = this.dataIndex
+    this.markIndexOfDelay = this.getDataIndex()
   }
 }
 

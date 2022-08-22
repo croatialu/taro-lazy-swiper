@@ -55,8 +55,7 @@ export interface LazySwiperProps<T> {
 
   onChange: (detail: { current: number }) => void
 
-  onAfterChanger: (detail: { prevIndex: number, current: number }) => void
-
+  onAnimationFinish: (detail: {  current: number }) => void
 }
 
 export interface LazySwiperExtra {

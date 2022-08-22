@@ -1,7 +1,7 @@
 
 import { getSafeIndex, getStepValue, getTargetIndex } from "./common/utils";
 
-interface SchedulerParams {
+export interface SchedulerParams {
 
   /**
    * 数据总量
@@ -27,27 +27,55 @@ interface SchedulerParams {
    * @default false
    */
   loop?: boolean
+
+
+  onRestart?: (detail: { containerIndex: number, dataIndex: number }) => void
+
+  onContainerIndexChange?: (detail: { containerIndex: number, dataIndex: number }) => void
+
+  onDataIndexChange?: (detail: { containerIndex: number, dataIndex: number }) => void
+
+  onRecompute?: () => void
 }
 
 class Scheduler {
-  public containerIndex = 0;
   public group: number[] = []
-  public dataIndex: number;
   public loop: boolean;
 
   public indexMapping: Map<number, number> = new Map()
 
-  private dataCount: number;
 
+  private dataIndex: number;
+  private containerIndex = 0;
+
+  private dataCount: number;
 
   private minCount: number;
 
+  private onContainerIndexChange: SchedulerParams['onContainerIndexChange']
+  private onDataIndexChange : SchedulerParams['onDataIndexChange']
+  private onRecompute : SchedulerParams['onRecompute']
+  private onRestart : SchedulerParams['onRestart']
 
-  public constructor({ dataCount = 0, defaultDataIndex = 0, minCount = 3, loop = false }: SchedulerParams){
+  public constructor(
+    {
+      dataCount = 0,
+      defaultDataIndex = 0,
+      minCount = 3,
+      loop = false,
+      onDataIndexChange,
+      onRecompute,
+      onRestart,
+      onContainerIndexChange
+    }: SchedulerParams){
     this.dataCount = dataCount;
     this.dataIndex = defaultDataIndex;
     this.minCount = minCount
     this.loop = loop
+    this.onDataIndexChange = onDataIndexChange
+    this.onRecompute = onRecompute
+    this.onRestart = onRestart
+    this.onContainerIndexChange = onContainerIndexChange
   }
 
 
@@ -113,21 +141,26 @@ class Scheduler {
    * 更新当前数据索引
    * @param index 当前索引值
    */
-  public updateIndex(index: number, { onDataIndexChange, onRestart, onRecompute }: { onRestart?: () => void, onDataIndexChange?: () => void, onRecompute?: () => void } = {}){
+  public async updateIndex(index: number){
     const preDataIndex = this.dataIndex
     const getIndex = this.loop ? getTargetIndex : getSafeIndex
+
     this.dataIndex = getIndex(index, this.maxDataIndex);
 
+    this.setContainerIndex(
+      this.computeContainerIndex()
+    )
+
     if(preDataIndex !== this.dataIndex)  {
-      onDataIndexChange?.()
+      this.onDataIndexChange?.({containerIndex: this.containerIndex,  dataIndex: this.dataIndex})
     }
 
     if (!this.loop && Math.abs(this.dataIndex - preDataIndex) > 1) {
-      onRestart?.()
+      this.onRestart?.({ containerIndex: this.containerIndex, dataIndex: this.dataIndex })
     }
 
     if (this.loop && Math.abs(getStepValue(preDataIndex, this.dataIndex, this.maxDataIndex)) > 1) {
-      onRecompute?.()
+      this.onRecompute?.()
     }
 
 
@@ -166,13 +199,31 @@ class Scheduler {
   }
 
   public setContainerIndex(index: number){
-    // const preContainerIndex = this.containerIndex
+    const preContainerIndex = this.containerIndex
     this.containerIndex = index
 
+    if(preContainerIndex !== index) {
+      this.onContainerIndexChange?.({ containerIndex: this.containerIndex, dataIndex: this.dataIndex })
+    }
 
     return this.containerIndex
   }
 
+  public getStepOffset(targetIndex: number){
+    return getStepValue(this.dataIndex, targetIndex, this.maxDataIndex, this.loop)
+  }
+
+  public getSafeDataIndex(dataIndex: number){
+    return getSafeIndex(dataIndex, this.maxDataIndex)
+  }
+
+  public getDataIndexByStep(){
+
+  }
+
+  public getDataIndex(){
+    return this.dataIndex
+  }
 
   /**
    * 非 `loop` 模式时， 特殊处理第一组数据
