@@ -51,11 +51,11 @@ export interface LazySwiperProps<T> {
 
   lazySwiper?: LazySwiperExtra
 
-  onBeforeChange: (detail: { fromIndex: number, toIndex: number }) => (Promise<boolean | undefined> | (boolean | undefined))
+  onBeforeChange?: (detail: { fromIndex: number, toIndex: number }) => (Promise<boolean | undefined> | (boolean | undefined))
 
-  onChange: (detail: { current: number }) => void
+  onChange?: (detail: { current: number }) => void
 
-  onAnimationFinish: (detail: {  current: number }) => void
+  onAnimationFinish?: (detail: {  current: number }) => void
 }
 
 export interface LazySwiperExtra {

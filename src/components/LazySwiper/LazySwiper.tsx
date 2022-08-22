@@ -159,14 +159,6 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     })
   }, [lazySwiper, nextSection, prevSection, toSection])
 
-
-  console.log({
-    source,
-    swiperKey,
-    swiperIndex,
-
-  }, 'lazySwiper')
-
   return (
     <View className={`lazy-swiper ${className}`} style={style}>
       <Swiper
