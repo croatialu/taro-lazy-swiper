@@ -13,6 +13,12 @@ https://user-images.githubusercontent.com/22277972/185527883-754dc748-b64a-4717-
 ## 使用
 
 
+## 测试用例
+### 非 `loop` 模式
+该模式下， 测试用例增加到了200条， 具体看 [Scheduler.test.ts](https://github.com/CroatiaParanoia/taro-lazy-swiper/blob/master/test/Scheduler.test.ts)
+
+### `loop` 模式
+该模式下， 测试用例还没来得及新增
 
 
 ### 安装
@@ -57,15 +63,18 @@ const App = () => {
 
 ## API
 
-| 属性            | 类型                                                                      | 描述                   |
-|---------------|-------------------------------------------------------------------------|----------------------|
-| dataSource    | LazySwiperItem<T>[]                                                     | 数据源                  |
-| keyExtractor  | (data: T) => string                                                     | key 计算               |
-| renderContent | (data: T, info: { isActive: boolean, key: string } ) => React.ReactNode | 每个swiper item 的计算    |
-| maxCount      | number                                                                  | 同时渲染的swiper item最大数量 |
-| loop          | boolean                                                                 | 是否循环                 |
-| duration      | number                                                                  | 切换动画时长               |
-| lazySwiper    | LazySwiperExtra                                                         | 对外暴露的连接属性            |
+| 属性                | 类型                                                                        | 描述                    |
+|-------------------|---------------------------------------------------------------------------|-----------------------|
+| dataSource        | `LazySwiperItem<T>[]`                                                     | 数据源                   |
+| keyExtractor      | `(data: T) => string`                                                     | key 计算                |
+| renderContent     | `(data: T, info: { isActive: boolean, key: string } ) => React.ReactNode` | 每个swiper item 的计算     |
+| maxCount          | `number  `                                                                | 同时渲染的swiper item最大数量  |
+| loop              | `boolean `                                                                | 是否循环                  |
+| duration          | `number`                                                                  | 切换动画时长                |
+| lazySwiper        | `LazySwiperExtra`                                                         | 对外暴露的连接属性             |
+| onBeforeChange    | `(detail: BeforeChangeEventDetail) => boolean`                            | 变更前，可以进行拦截（手势滑动的无法拦截） |
+| onChange          | `(detail: ChangeEventDetail) => void`                                     | 当 index 变更后           |
+| onAnimationFinish | `(detail: ChangeEventDetail) => void`                                     | index 变更之后的动画结束后      |
 
 
 

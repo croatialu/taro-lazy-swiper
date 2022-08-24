@@ -9,6 +9,15 @@ export interface LazySwiperItemConfig<T> extends LazySwiperItem<T> {
   isActive: boolean
 }
 
+export interface BeforeChangeEventDetail {
+  fromIndex: number,
+  toIndex: number
+}
+
+export interface ChangeEventDetail {
+  current: number
+}
+
 export interface LazySwiperProps<T> {
   className?: string
   style?: CSSProperties
@@ -51,11 +60,11 @@ export interface LazySwiperProps<T> {
 
   lazySwiper?: LazySwiperExtra
 
-  onBeforeChange?: (detail: { fromIndex: number, toIndex: number }) => (Promise<boolean | undefined> | (boolean | undefined))
+  onBeforeChange?: (detail: BeforeChangeEventDetail) => (Promise<boolean | undefined> | (boolean | undefined))
 
-  onChange?: (detail: { current: number }) => void
+  onChange?: (detail: ChangeEventDetail) => void
 
-  onAnimationFinish?: (detail: {  current: number }) => void
+  onAnimationFinish?: (detail: ChangeEventDetail) => void
 }
 
 export interface LazySwiperExtra {
