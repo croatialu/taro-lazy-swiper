@@ -225,6 +225,10 @@ class Scheduler {
     return this.dataIndex
   }
 
+  public getContainerIndex(){
+    return this.containerIndex
+  }
+
   /**
    * 非 `loop` 模式时， 特殊处理第一组数据
    * @private

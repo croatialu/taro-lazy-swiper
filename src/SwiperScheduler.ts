@@ -87,6 +87,11 @@ class SwiperScheduler<T> extends Scheduler {
 
     this.dataSource = value
     this.updateCount(this.dataSource.length)
+
+    // return this.emitRestart({
+    //   containerIndex: this.getContainerIndex(),
+    //   dataIndex: this.getDataIndex()
+    // })
     return this.recompute()
   }
 
@@ -129,7 +134,6 @@ class SwiperScheduler<T> extends Scheduler {
    */
   public getActiveStatusBySwiperIndex(index: number) {
     const targetMarkIndex = this.indexMapping.get(index);
-
 
     return this.markIndexOfDelay === targetMarkIndex
   }
@@ -180,6 +184,8 @@ class SwiperScheduler<T> extends Scheduler {
       key:Date.now().toString(36).slice(0, 8),
       source
     })
+
+    return source
   }
 
   public emitSwiperIndexChange({containerIndex, dataIndex }: Parameters<NotUndefined<SchedulerParams['onContainerIndexChange']>>[0]){
@@ -199,12 +205,11 @@ class SwiperScheduler<T> extends Scheduler {
     const result = super.recomputeIndexArr()
 
     const source = result.map(index => this.dataSource[index])
-
+    this.updateMarkIndexOfDelay()
+    
     this.setSource(
       source
     )
-
-    this.updateMarkIndexOfDelay()
 
     return source
   }
