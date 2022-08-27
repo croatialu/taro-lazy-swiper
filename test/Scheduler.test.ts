@@ -366,7 +366,7 @@ function createTest({ dataCount, minCount, loop }: TestInputParams, testMapping:
         scheduler.updateIndex(dataIndex)
         scheduler.recomputeIndexArr()
         expect(scheduler.groupSize).toBe(item.output.length)
-        expect(scheduler.containerIndex).toBe(item.containerIndex)
+        expect(scheduler.getContainerIndex()).toBe(item.containerIndex)
         expect(scheduler.group).toEqual(item.output)
       })
 
