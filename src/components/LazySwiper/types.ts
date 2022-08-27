@@ -1,14 +1,6 @@
 import {SwiperItemProps} from "@tarojs/components/types/SwiperItem";
 import {CSSProperties} from "react";
 
-export interface LazySwiperItem<T> extends SwiperItemProps {
-  data: T,
-}
-
-export interface LazySwiperItemConfig<T> extends LazySwiperItem<T> {
-  isActive: boolean
-}
-
 export interface BeforeChangeEventDetail {
   fromIndex: number,
   toIndex: number
@@ -28,10 +20,7 @@ export interface LazySwiperProps<T> {
    */
   defaultIndex?: number
 
-  dataSource: LazySwiperItem<T>[]
-  keyExtractor?: (data: T) => string
-  renderContent?: (data: T, options: { key: string, isActive: boolean }) => React.ReactNode
-
+  dataSource: T[]
 
   /**
    * 滑动方向是否为纵向
@@ -60,11 +49,18 @@ export interface LazySwiperProps<T> {
 
   lazySwiper?: LazySwiperExtra
 
+  keyExtractor?: (data: T) => string
+
+  renderContent?: (data: T, options: { key: string, isActive: boolean }) => React.ReactNode
+
+
   onBeforeChange?: (detail: BeforeChangeEventDetail) => (Promise<boolean | undefined> | (boolean | undefined))
 
   onChange?: (detail: ChangeEventDetail) => void
 
   onAnimationFinish?: (detail: ChangeEventDetail) => void
+
+  swiperItemExtractor?: (data: T) => SwiperItemProps
 }
 
 export interface LazySwiperExtra {

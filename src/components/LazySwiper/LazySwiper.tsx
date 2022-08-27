@@ -4,7 +4,7 @@ import { SwiperProps } from "@tarojs/components/types/Swiper";
 import Taro from "@tarojs/taro";
 
 import SwiperScheduler from "../../SwiperScheduler";
-import { LazySwiperItem, LazySwiperProps } from "./types";
+import { LazySwiperProps } from "./types";
 
 import { getStepValue, sleep } from "../../common/utils";
 import { minCount } from "./constant";
@@ -25,6 +25,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     lazySwiper,
     duration = 500,
 
+    swiperItemExtractor: _swiperItemExtractor,
     renderContent: _renderContent,
     keyExtractor: _keyExtractor,
     onChange: _onChange,
@@ -33,7 +34,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   } = props
   const [isAnimating, setAnimating] = useState(false)
   const [swiperIndex, setSwiperIndex] = useState(0)
-  const [source, setSource] = useState<LazySwiperItem<T>[]>([])
+  const [source, setSource] = useState<T[]>([])
 
   const [swiperKey, setSwiperKey] = useState('normal')
 
@@ -43,7 +44,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   const onChange = useMemoizedFn(_onChange)
   const onBeforeChange = useMemoizedFn(_onBeforeChange)
   const onAnimationFinish = useMemoizedFn(_onAnimationFinish)
-
+  const swiperItemExtractor = useMemoizedFn(_swiperItemExtractor)
 
   const updateSwiperIndex = useCallback(async (index: number) => {
     setSwiperIndex(index)
@@ -58,7 +59,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     setAnimating(false)
   }, [duration])
 
-  const swiperSchedulerRef = useRef<SwiperScheduler<LazySwiperItem<T>>>(
+  const swiperSchedulerRef = useRef<SwiperScheduler<T>>(
     useMemo(() => {
       return new SwiperScheduler({
         defaultMarkIndex: defaultIndex,
@@ -177,12 +178,12 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
         {
           source.map((item, index) => {
             if (!item) return
-            const { data, ...otherProps } = item
             const isActive = getActiveStatusBySwiperIndex(index)
-            const key = keyExtractor(data) || index.toString()
+            const swiperItemProps = swiperItemExtractor(item) || {}
+            const key = keyExtractor(item) || index.toString()
             return (
-              <SwiperItem key={key} {...otherProps} >
-                {renderContent(data, { key, isActive })}
+              <SwiperItem {...swiperItemProps} key={key}>
+                {renderContent(item, { key, isActive })}
               </SwiperItem>
             )
           })
