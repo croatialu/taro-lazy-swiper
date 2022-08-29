@@ -65,8 +65,8 @@ const App = () => {
 
 | 属性                | 类型                                                                        | 描述                    |
 |-------------------|---------------------------------------------------------------------------|-----------------------|
-| dataSource        | `LazySwiperItem<T>[]`                                                     | 数据源                   |
-| keyExtractor      | `(data: T) => string`                                                     | key 计算                |
+| dataSource        | `T[]`                                                     | 数据源                   |
+| keyExtractor      | `(data: T, index: number) => string`                                                     | key 计算                |
 | renderContent     | `(data: T, info: { isActive: boolean, key: string } ) => React.ReactNode` | 每个swiper item 的计算     |
 | maxCount          | `number  `                                                                | 同时渲染的swiper item最大数量  |
 | loop              | `boolean `                                                                | 是否循环                  |
@@ -75,7 +75,7 @@ const App = () => {
 | onBeforeChange    | `(detail: BeforeChangeEventDetail) => boolean`                            | 变更前，可以进行拦截（手势滑动的无法拦截） |
 | onChange          | `(detail: ChangeEventDetail) => void`                                     | 当 index 变更后           |
 | onAnimationFinish | `(detail: ChangeEventDetail) => void`                                     | index 变更之后的动画结束后      |
-
+| swiperItemExtractor | `(data: T, index: number) => SwiperItemProps` | swiper props 计算
 
 
 ## 共建

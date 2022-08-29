@@ -49,10 +49,9 @@ export interface LazySwiperProps<T> {
 
   lazySwiper?: LazySwiperExtra
 
-  keyExtractor?: (data: T) => string
+  keyExtractor?: (data: T, index: number) => string
 
   renderContent?: (data: T, options: { key: string, isActive: boolean }) => React.ReactNode
-
 
   onBeforeChange?: (detail: BeforeChangeEventDetail) => (Promise<boolean | undefined> | (boolean | undefined))
 
@@ -60,7 +59,7 @@ export interface LazySwiperProps<T> {
 
   onAnimationFinish?: (detail: ChangeEventDetail) => void
 
-  swiperItemExtractor?: (data: T) => SwiperItemProps
+  swiperItemExtractor?: (data: T, index: number) => SwiperItemProps
 }
 
 export interface LazySwiperExtra {

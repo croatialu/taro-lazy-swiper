@@ -113,6 +113,10 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     return swiperSchedulerRef.current.getActiveStatusBySwiperIndex(index)
   }, [])
 
+  const getDataIndexByContainerIndex = useCallback((index: number) => {
+    return swiperSchedulerRef.current.getDataIndexByContainerIndex(index)
+  }, [])
+
   const canNext = useCallback(async (targetIndex: number, callback: () => void) => {
     const swiperScheduler = swiperSchedulerRef.current
 
@@ -179,8 +183,9 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
           source.map((item, index) => {
             if (!item) return
             const isActive = getActiveStatusBySwiperIndex(index)
-            const swiperItemProps = swiperItemExtractor(item) || {}
-            const key = keyExtractor(item) || index.toString()
+            const dataIndex = getDataIndexByContainerIndex(index)
+            const swiperItemProps = swiperItemExtractor(item, dataIndex) || {}
+            const key = keyExtractor(item, dataIndex) || index.toString()
             return (
               <SwiperItem {...swiperItemProps} key={key}>
                 {renderContent(item, { key, isActive })}

@@ -228,6 +228,9 @@ class Scheduler {
   public getContainerIndex(){
     return this.containerIndex
   }
+  public getDataIndexByContainerIndex(index: number){
+    return this.indexMapping.get(index)!
+  }
 
   /**
    * 非 `loop` 模式时， 特殊处理第一组数据
