@@ -117,41 +117,38 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     return swiperSchedulerRef.current.getDataIndexByContainerIndex(index)
   }, [])
 
-  const canNext = useCallback(async (targetIndex: number, callback: () => void) => {
+  const canNext = useCallback(async (targetIndex: number, callback: () => void, payload?: any) => {
     const swiperScheduler = swiperSchedulerRef.current
 
-    const result = await onBeforeChange({ fromIndex: swiperScheduler.getDataIndex(), toIndex: targetIndex })
+    const result = await onBeforeChange({ fromIndex: swiperScheduler.getDataIndex(), toIndex: targetIndex, payload })
 
     if (result === false) return;
     callback()
 
   }, [onBeforeChange])
 
-  const canNextWithStep = useCallback(async (step: number, callback: (targetIndex: number) => void) => {
+
+  const nextSection = useCallback((payload) => {
     const swiperScheduler = swiperSchedulerRef.current
-
-    const targetIndex = swiperScheduler.getDataIndex() + step;
-
-    return canNext(targetIndex, () => callback(targetIndex))
-  }, [canNext])
-
-  const nextSection = useCallback(() => {
-
-    canNextWithStep(1, () => {
+    const targetIndex = swiperScheduler.getDataIndex() + 1;
+    canNext(targetIndex, () => {
       updateSwiperIndexByStep(1)
-    })
-  }, [canNextWithStep, updateSwiperIndexByStep])
+    }, payload)
+  }, [updateSwiperIndexByStep])
 
-  const prevSection = useCallback(() => {
-    canNextWithStep(-1, () => {
+  const prevSection = useCallback((payload) => {
+    const swiperScheduler = swiperSchedulerRef.current
+    const targetIndex = swiperScheduler.getDataIndex() - 1;
+
+    canNext(targetIndex, () => {
       updateSwiperIndexByStep(-1)
-    })
-  }, [canNextWithStep, updateSwiperIndexByStep])
+    }, payload)
+  }, [updateSwiperIndexByStep])
 
-  const toSection = useCallback(async (index) => {
+  const toSection = useCallback(async (index, payload) => {
     canNext(index, () => {
       swiperSchedulerRef.current.toSection(index)
-    })
+    }, payload)
   }, [canNext])
 
 

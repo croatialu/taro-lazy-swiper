@@ -53,7 +53,7 @@ export interface LazySwiperProps<T> {
 
   renderContent?: (data: T, options: { key: string, isActive: boolean }) => React.ReactNode
 
-  onBeforeChange?: (detail: BeforeChangeEventDetail) => (Promise<boolean | undefined> | (boolean | undefined))
+  onBeforeChange?: (detail: BeforeChangeEventDetail & { payload: any }) => (Promise<boolean | undefined> | (boolean | undefined))
 
   onChange?: (detail: ChangeEventDetail) => void
 

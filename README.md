@@ -72,7 +72,7 @@ const App = () => {
 | loop              | `boolean `                                                                | 是否循环                  |
 | duration          | `number`                                                                  | 切换动画时长                |
 | lazySwiper        | `LazySwiperExtra`                                                         | 对外暴露的连接属性             |
-| onBeforeChange    | `(detail: BeforeChangeEventDetail) => boolean`                            | 变更前，可以进行拦截（手势滑动的无法拦截） |
+| onBeforeChange    | `(detail: BeforeChangeEventDetail & { playload: any }) => boolean`                            | 变更前，可以进行拦截（手势滑动的无法拦截） |
 | onChange          | `(detail: ChangeEventDetail) => void`                                     | 当 index 变更后           |
 | onAnimationFinish | `(detail: ChangeEventDetail) => void`                                     | index 变更之后的动画结束后      |
 | swiperItemExtractor | `(data: T, index: number) => SwiperItemProps` | swiper props 计算
