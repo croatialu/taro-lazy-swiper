@@ -1,6 +1,6 @@
 {
   "name": "taro-lazy-swiper",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "browser": "dist/index.umd.js",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",
