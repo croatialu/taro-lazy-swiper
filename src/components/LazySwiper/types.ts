@@ -63,7 +63,7 @@ export interface LazySwiperProps<T> {
 }
 
 export interface LazySwiperExtra {
-  nextSection: () => void
-  prevSection: () => void
-  toSection: (index: number) => void
+  nextSection: (payload?: object) => void
+  prevSection: (payload?: object) => void
+  toSection: (index: number, payload?: object) => void
 }

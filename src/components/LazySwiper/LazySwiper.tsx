@@ -117,7 +117,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     return swiperSchedulerRef.current.getDataIndexByContainerIndex(index)
   }, [])
 
-  const canNext = useCallback(async (targetIndex: number, callback: () => void, payload?: any) => {
+  const canNext = useCallback(async (targetIndex: number, callback: () => void, payload: object) => {
     const swiperScheduler = swiperSchedulerRef.current
 
     const result = await onBeforeChange({ fromIndex: swiperScheduler.getDataIndex(), toIndex: targetIndex, payload })
@@ -128,7 +128,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
   }, [onBeforeChange])
 
 
-  const nextSection = useCallback((payload) => {
+  const nextSection = useCallback((payload: object = {}) => {
     const swiperScheduler = swiperSchedulerRef.current
     const targetIndex = swiperScheduler.getDataIndex() + 1;
     canNext(targetIndex, () => {
@@ -136,7 +136,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     }, payload)
   }, [updateSwiperIndexByStep])
 
-  const prevSection = useCallback((payload) => {
+  const prevSection = useCallback((payload: object = {}) => {
     const swiperScheduler = swiperSchedulerRef.current
     const targetIndex = swiperScheduler.getDataIndex() - 1;
 
@@ -145,7 +145,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     }, payload)
   }, [updateSwiperIndexByStep])
 
-  const toSection = useCallback(async (index, payload) => {
+  const toSection = useCallback(async (index, payload = {}) => {
     canNext(index, () => {
       swiperSchedulerRef.current.toSection(index)
     }, payload)
