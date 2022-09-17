@@ -168,9 +168,6 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
         key={swiperKey}
         current={swiperIndex}
         onChange={handleChange}
-        indicatorColor='#999'
-        indicatorActiveColor='#333'
-        indicatorDots
         vertical={vertical}
         circular={swiperSchedulerRef.current.circular}
         duration={duration}
