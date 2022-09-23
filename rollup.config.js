@@ -31,17 +31,6 @@ export default {
       format: 'es',
       sourcemap: false
     },
-    {
-      file: resolveFile(Package.browser),
-      format: 'umd',
-      name: 'taro-lazy-swiper',
-      sourcemap: false,
-      globals: {
-        react: 'React',
-        '@tarojs/components': 'components',
-        '@tarojs/taro': 'Taro'
-      }
-    }
   ],
   external: externalPackages,
   plugins: [

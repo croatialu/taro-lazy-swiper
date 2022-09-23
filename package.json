@@ -1,8 +1,7 @@
 {
   "name": "taro-lazy-swiper",
   "version": "0.0.9",
-  "browser": "dist/index.umd.js",
-  "module": "dist/index.esm.js",
+  "module": "lib/index.js",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "description": "基于小程序 swiper 开发的 lazy swiper",
@@ -12,6 +11,13 @@
     "dist",
     "types"
   ],
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./lib/index.js"
+    }
+  },
   "scripts": {
     "dev": "yarn run dev:lib",
     "dev:lib": "tsc --project ./tsconfig.build.json --watch --incremental",
