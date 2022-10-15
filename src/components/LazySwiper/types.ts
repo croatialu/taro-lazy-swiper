@@ -49,6 +49,11 @@ export interface LazySwiperProps<T> {
 
   lazySwiper?: LazySwiperExtra
 
+  /**
+   * swiper滑动 间隔时间，默认等于 duration 时间
+   */
+  swiperWait?: number
+
   keyExtractor?: (data: T, index: number) => string
 
   renderContent?: (data: T, options: { key: string, isActive: boolean }) => React.ReactNode

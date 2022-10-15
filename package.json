@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "dev": "yarn run dev:lib",
+    "dev": "yarn run dev:rollup",
     "dev:lib": "tsc --project ./tsconfig.build.json --watch --incremental",
     "dev:rollup": "rollup --config ./rollup.config.js --watch",
     "build": "yarn run build:rollup && yarn run build:lib",

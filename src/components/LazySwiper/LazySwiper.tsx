@@ -24,6 +24,7 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     loop = false,
     lazySwiper,
     duration = 500,
+    swiperWait = duration,
 
     swiperItemExtractor: _swiperItemExtractor,
     renderContent: _renderContent,
@@ -55,9 +56,9 @@ function LazySwiper<T>(props: PropsWithChildren<LazySwiperProps<T>>) {
     }
 
     swiperSchedulerRef.current.recompute()
-    await sleep(Math.floor(duration / 3))
+    await sleep(Math.floor(swiperWait))
     setAnimating(false)
-  }, [duration])
+  }, [duration, swiperWait])
 
   const swiperSchedulerRef = useRef<SwiperScheduler<T>>(
     useMemo(() => {
